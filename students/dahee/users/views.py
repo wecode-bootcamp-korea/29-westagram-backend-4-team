@@ -7,7 +7,7 @@ from django.views import View
 
 from users.models import User
 
-class UserView(View):
+class SignUpView(View):
     def post(self, request):
         user_data = json.loads(request.body)
 
@@ -18,7 +18,7 @@ class UserView(View):
                 password = user_data["password"],
                 phone_number = user_data["phone_number"]
             )
-
+            
             email_validation = re.compile(r'^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-]+$')
             password_validation = re.compile(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&.]{8,}$')
             phone_number_validation = re.compile(r'\d{3}-\d{3,4}-\d{4}')
@@ -29,6 +29,7 @@ class UserView(View):
                 return JsonResponse({"message": "INVALID_PASSWORD"}, status=400)
             if not phone_number_validation.search(user_data["phone_number"]):
                 return JsonResponse({"message": "INVALID_PHONE_NUMBER"}, status=400)
+                
             user.save()
         except KeyError:
             return JsonResponse({"message": "KEY_ERROR"}, status=400)
