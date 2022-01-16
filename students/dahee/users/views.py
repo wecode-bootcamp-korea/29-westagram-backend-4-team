@@ -1,7 +1,6 @@
 import json
 import re
 
-from django.db    import IntegrityError
 from django.http  import JsonResponse
 from django.views import View
 
@@ -26,6 +25,8 @@ class SignUpView(View):
                 return JsonResponse({"message": "INVALID_PASSWORD"}, status=400)
             if not re.match(REGEX_PHONE_NUMBER, user_phone_number):
                 return JsonResponse({"message": "INVALID_PHONE_NUMBER"}, status=400)
+            if User.objects.filter(email=user_email).exists():
+                return JsonResponse({"message": "EMAIL_ALREADY_EXISTS"}, status=400)
 
             user = User(
                 name         = user_data["name"],
@@ -39,5 +40,3 @@ class SignUpView(View):
             return JsonResponse({"message": "SUCCESS"}, status=201)
         except KeyError:
             return JsonResponse({"message": "KEY_ERROR"}, status=400)
-        except IntegrityError:
-            return JsonResponse({"message": "EMAIL_ALREADY_EXISTS"}, status=400)
