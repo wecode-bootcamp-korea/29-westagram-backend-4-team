@@ -13,8 +13,10 @@ class SignInView(View):
             user_email    = user_data["email"]
             user_password = user_data["password"]
 
-            if not User.objects.filter(email=user_email).exists() \
-                or not User.objects.filter(password=user_password).exists():
+            if not User.objects.filter(
+                email    = user_email,
+                password = user_password
+                ).exists():
                 return JsonResponse({"message": "INVALID_USER"}, status=401)
 
             return JsonResponse({"message": "SUCCESS"}, status=200)
