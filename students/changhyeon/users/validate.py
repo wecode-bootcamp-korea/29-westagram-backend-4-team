@@ -1,19 +1,13 @@
 import re
-from django.core.exceptions import ValidationError 
+from django.core.exceptions import ValidationError
+
+REGEX_EMAIL    = '^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+REGEX_PASSWORD = '^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,}$'
 
 def validate_email(email):
-  email_pattern = re.match('^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email)
-  if email_pattern == None:
-    raise ValidationError(
-      message = ('INVALID VALUE'),
-      code    = 'invalid'
-    )   
+  if not re.match(REGEX_EMAIL, email):
+    raise ValidationError('INVALID_EMAIL_ADDRESS')
 
 def validate_password(password):
-  password_pattern = re.match("^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[$@$!%*?&])[A-Za-z\d$@$!%*?&]{8,}" , password)
-  if password_pattern == None:
-    raise ValidationError(
-      message = ('INVALID VLAUE'),
-      code    = 'invalid'
-    )
-
+  if not re.match(REGEX_PASSWORD, password):
+    raise ValidationError('INVALID_PASSWORD')
