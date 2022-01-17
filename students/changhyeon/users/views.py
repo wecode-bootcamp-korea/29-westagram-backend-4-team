@@ -1,5 +1,4 @@
-import json,bcrypt
-from django.shortcuts       import render
+import json, bcrypt
 from django.http            import JsonResponse
 from django.views           import View
 from django.core.exceptions import ValidationError 
@@ -11,18 +10,17 @@ class SignupView(View):
     data = json.loads(request.body) 
 
     try:
-      name         = data["name"]
-      email        = data["email"]
-      password     = data["password"]
-      phone_number = data["phone_number"]
+      name            = data["name"]
+      email           = data["email"]
+      password        = data["password"]
+      phone_number    = data["phone_number"]
+      hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
       validate_email(email)       
       validate_password(password) 
 
       if Users.objects.filter(email = email).exists(): 
         return JsonResponse({"message": "EMAIL_AREADY_EXISTS"}, status=400)
-
-      hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
 
       user = Users.objects.create(
         name         = name,
