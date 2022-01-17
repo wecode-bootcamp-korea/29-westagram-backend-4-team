@@ -1,4 +1,4 @@
-import json
+import json,bcrypt
 from django.shortcuts       import render
 from django.http            import JsonResponse
 from django.views           import View
@@ -22,10 +22,12 @@ class SignupView(View):
       if Users.objects.filter(email = email).exists(): 
         return JsonResponse({"message": "EMAIL_AREADY_EXISTS"}, status=400)
 
+      hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+
       user = Users.objects.create(
         name         = name,
         email        = email,
-        password     = password,
+        password     = hashed_password.decode('utf-8'),
         phone_number = phone_number,
       )
 
