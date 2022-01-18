@@ -1,9 +1,11 @@
-import json, re, bcrypt    
+import email
+import json, re, bcrypt, jwt
 
 from django.http  import JsonResponse
 from django.views import View
 
 from users.models import User
+from my_settings import SECRET_KEY, ALGORITHM
 
 class SignInView(View):
     def post(self, request):
@@ -11,15 +13,21 @@ class SignInView(View):
 
         try:
             user_email    = user_data["email"]
-            user_password = user_data["password"]
+            user_password = user_data["password"].encode('utf-8')
 
-            if not User.objects.filter(
-                email    = user_email,
-                password = user_password
-                ).exists():
+            if not User.objects.filter(email = user_email).exists():
                 return JsonResponse({"message": "INVALID_USER"}, status=401)
 
-            return JsonResponse({"message": "SUCCESS"}, status=200)
+            user = User.objects.get(email = user_email)
+
+            if not bcrypt.checkpw(
+                user_password, 
+                user.password.encode('utf-8')
+                ):
+                return JsonResponse({"message": "INVALID_USER"}, status=401)
+
+            access_token = jwt.encode({"user_id": user.id}, SECRET_KEY, ALGORITHM)
+            return JsonResponse({"access_token": access_token}, status=200)
 
         except KeyError:
             return JsonResponse({"message": "KEY_ERROR"}, status=400)
