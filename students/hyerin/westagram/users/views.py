@@ -11,9 +11,6 @@ class SignupView(View):
         try:
             data = json.loads(request.body)
 
-            # if (data["email"] == "") or (data["password"] == ""):
-            #     return JsonResponse({"message": "ERROR_EMPTY_EMAIL_OR_PASSWORD"}, status=400)
-
             if not re.match(r"^[a-zA-Z0-9+-_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", data["email"]):
                 return JsonResponse({"message": "ERROR_EMAIL_NEED_@AND."}, status=400)
 
