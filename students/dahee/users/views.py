@@ -1,4 +1,3 @@
-import email
 import json, re, bcrypt, jwt
 
 from django.http  import JsonResponse
